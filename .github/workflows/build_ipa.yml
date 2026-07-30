@@ -1,0 +1,72 @@
+name: Build Unsigned IPA
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Swift & Xcode project structure
+        run: |
+          mkdir -p CineMagicPro/Sources CineMagicPro/Resources
+          cp ContentView.swift CineMagicPro/Sources/
+          cp Info.plist CineMagicPro/Resources/
+          
+          # إنشاء مشروع Swift Package أو Xcode هيكلي لبناء التطبيق
+          cat << 'EOF' > CineMagicPro/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>CineMagicPro</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.cinemagic.pro</string>
+              <key>CFBundleName</key>
+              <string>CineMagic Pro</string>
+              <key>CFBundleShortVersionString</key>
+              <string>1.0</string>
+              <key>CFBundleVersion</key>
+
+              <string>1</string>
+              <key>NSCameraUsageDescription</key>
+              <string>CineMagic Pro needs camera access to record video.</string>
+              <key>NSMicrophoneUsageDescription</key>
+              <string>CineMagic Pro needs microphone access to record audio.</string>
+              <key>NSPhotoLibraryAddUsageDescription</key>
+              <string>CineMagic Pro saves your cinematic clips to Photos.</string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Build App Executable using swiftc
+        run: |
+          SDKPATH=$(xcrun --sdk iphoneos --show-sdk-path)
+          mkdir -p Payload/CineMagicPro.app
+          
+          swiftc -sdk $SDKPATH \
+                 -target arm64-apple-ios15.0 \
+                 -emit-executable \
+                 -o Payload/CineMagicPro.app/CineMagicPro \
+                 CineMagicPro/Sources/ContentView.swift \
+                 -Xlinker -rpath -Xlinker /System/Library/Frameworks \
+                 -Xlinker -rpath -Xlinker @executable_path/Frameworks
+                 
+          cp CineMagicPro/Info.plist Payload/CineMagicPro.app/
+
+      - name: Package into IPA
+        run: |
+          zip -r CineMagicPro.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CineMagicPro-Unsigned-IPA
+          path: CineMagicPro.ipa
