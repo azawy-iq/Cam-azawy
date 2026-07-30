@@ -19,10 +19,9 @@ jobs:
           cp ContentView.swift CineMagicPro/Sources/
           cp Info.plist CineMagicPro/Resources/
           
-          # إنشاء مشروع Swift Package أو Xcode هيكلي لبناء التطبيق
           cat << 'EOF' > CineMagicPro/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.plist">
           <plist version="1.0">
           <dict>
               <key>CFBundleExecutable</key>
@@ -34,7 +33,6 @@ jobs:
               <key>CFBundleShortVersionString</key>
               <string>1.0</string>
               <key>CFBundleVersion</key>
-
               <string>1</string>
               <key>NSCameraUsageDescription</key>
               <string>CineMagic Pro needs camera access to record video.</string>
