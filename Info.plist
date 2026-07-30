@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSCameraUsageDescription</key>
+    <string>CineMagic Pro needs camera access to record video.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>CineMagic Pro needs microphone access to record audio.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>CineMagic Pro saves your cinematic clips to Photos.</string>
+</dict>
+</plist>
