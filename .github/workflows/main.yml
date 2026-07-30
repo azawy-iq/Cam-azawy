@@ -13,11 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Swift & Xcode project structure
+      - name: Set up Xcode Project
         run: |
-          mkdir -p CineMagicPro/Sources CineMagicPro/Resources
+          mkdir -p CineMagicPro/Sources
           cp ContentView.swift CineMagicPro/Sources/
           
+          # إنشاء Info.plist
           cat << 'EOF' > CineMagicPro/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -43,15 +44,25 @@ jobs:
           </plist>
           EOF
 
-      - name: Build App Executable using swiftc
+      - name: Build App Executable using swiftc with Frameworks
         run: |
           SDKPATH=$(xcrun --sdk iphoneos --show-sdk-path)
           mkdir -p Payload/CineMagicPro.app
+          
+          # تصحيح اسم الكلاس واستدعاء أطر العمل كاملة
+          sed -i '' 's/AVAssetWriterPixelBufferAdaptor/AVAssetWriterInputPixelBufferAdaptor/g' CineMagicPro/Sources/ContentView.swift
           
           swiftc -sdk $SDKPATH \
                  -target arm64-apple-ios15.0 \
                  -parse-as-library \
                  -emit-executable \
+                 -framework Foundation \
+                 -framework SwiftUI \
+                 -framework AVFoundation \
+                 -framework CoreImage \
+                 -framework Vision \
+                 -framework MetalKit \
+                 -framework Photos \
                  -o Payload/CineMagicPro.app/CineMagicPro \
                  CineMagicPro/Sources/ContentView.swift \
                  -Xlinker -rpath -Xlinker /System/Library/Frameworks \
